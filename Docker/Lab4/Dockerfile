@@ -1,11 +1,8 @@
-FROM maven:3.9.15-eclipse-temurin-17-alpine AS builder
-WORKDIR /app
-COPY . .
-RUN mvn compile -DskipTests
-
 FROM eclipse-temurin:17-alpine
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 WORKDIR /app
-COPY --from=builder /app/target/classes ./
+COPY java/com/example/demo/DemoApplication.java .
+RUN javac DemoApplication.java
 USER appuser
 EXPOSE 8080
 CMD ["java", "com.example.demo.DemoApplication"]

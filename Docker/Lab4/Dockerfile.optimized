@@ -1,14 +1,15 @@
 # Stage 1: Build stage
-FROM maven:3.9.15-eclipse-temurin-17-alpine AS builder
-WORKDIR /app
-COPY . .
-RUN mvn package -DskipTests -Dspring-boot.repackage.skip=true
-
-# Stage 2: Runtime stage
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-alpine AS builder
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 WORKDIR /app
-COPY --from=builder /app/target/demo-0.0.1-SNAPSHOT.jar app.jar
+COPY java/com/example/demo/DemoApplication.java .
+RUN javac DemoApplication.java
+
+# Stage 2: Runtime stage
+FROM eclipse-temurin:17-alpine
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+WORKDIR /app
+COPY --from=builder /app/com/example/demo/DemoApplication.class .
 USER appuser
 EXPOSE 8080
-CMD ["java", "-cp", "app.jar", "com.example.demo.DemoApplication"]
+CMD ["java", "com.example.demo.DemoApplication"]
