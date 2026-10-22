@@ -1,0 +1,15 @@
+# Dockerfile for Part 1: Multi-stage Build Inside Docker
+# Java 17 Multi-stage Dockerfile for Calculator Application
+
+FROM maven:3.9.6-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY . .
+RUN mvn -B clean package
+
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+COPY --from=build /app/target/calculator.jar app.jar
+EXPOSE 8080
+USER appuser
+ENTRYPOINT ["java", "-jar", "app.jar"]

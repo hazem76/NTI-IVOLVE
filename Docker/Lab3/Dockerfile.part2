@@ -1,0 +1,13 @@
+# Dockerfile for Part 2: Artifact-first Build
+# Java 17 Runtime Dockerfile for Calculator Application
+
+# Build the application locally first:
+# mvn clean package
+
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+COPY --chown=appuser:appgroup ./calculator.jar app.jar
+EXPOSE 8080
+USER appuser
+ENTRYPOINT ["java", "-jar", "app.jar"]
