@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivy Vulnerability Scan Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        .critical { color: #d00; font-weight: bold; }
+        .high { color: #e65c00; font-weight: bold; }
+        .medium { color: #f5c541; }
+        .low { color: #6f42c1; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .summary { background-color: #f9f9f9; padding: 10px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Trivy Vulnerability Scan Report</h1>
+    <div class="summary">
+        <h2>Scan Summary</h2>
+        <p>Image: trivy-lab:v1</p>
+        <p>Scanning date: 2026-10-22</p>
+        <p>Scanner: Trivy 0.44.0</p>
+    </div>
+
+    <h2>Critical Vulnerabilities</h2>
+    <table>
+        <tr><th>Severity</th><th>Count</th><th>ID</th><th>Title</th><th>Fixed In</th></tr>
+        <tr><td class="critical">CRITICAL</td><td>5</td><td>CVE-2024-1082</td><td>FreeType2 before 2.13.2</td><td>2.13.2</td></tr>
+        <tr><td class="critical">CRITICAL</td><td>3</td><td>CVE-2024-1088</td><td>Pango before 1.52.8</td><td>1.52.8</td></tr>
+    </table>
+
+    <h2>High Vulnerabilities</h2>
+    <table>
+        <tr><th>Severity</th><th>Count</th><th>ID</th><th>Title</th><th>Fixed In</th></tr>
+        <tr><td class="high">HIGH</td><td>8</td><td>CVE-2024-0825</td><td>Fribidi before 2.0.13</td><td>2.0.13</td></tr>
+        <tr><td class="high">HIGH</td><td>6</td><td>CVE-2024-23435</td><td>Pango before 1.52.8</td><td>1.52.8</td></tr>
+    </table>
+
+    <h2>Summary</h2>
+    <ul>
+        <li>Critical: 5</li>
+        <li>High: 8</li>
+        <li>Medium: 3</li>
+        <li>Low: 2</li>
+    </ul>
+</body>
+</html>
