@@ -1,0 +1,20 @@
+This file represents the exported optimized Docker image (image2) saved via `docker save`.
+
+**Expected content after Docker save:**
+- A valid tar archive containing the optimized multi-stage Docker image
+- Built from `Dockerfile.optimized` with non-root user `appuser`
+- Base image: `eclipse-temurin:17-jre-alpine` 
+- Contains: compiled JAR file + JRE (minimal ~120MB vs ~250MB baseline)
+
+**Original lab steps (would execute with Docker daemon running):**
+1. Build optimized image `image2` from `Dockerfile.optimized`
+2. `docker save image2 > lab-image.tar` - save to tar file
+3. `docker rmi image2` - delete from local host
+4. `docker load < lab-image.tar` - load back from tar
+5. Verify the loaded image works as non-root user
+
+**Note:** Since Docker daemon is not available in this environment, the file serves as a placeholder. In a real Docker environment, this would contain the actual exported image layers.
+
+**Expected size comparison:**
+- Baseline image1: ~250MB (with Maven, JDK, build tools)
+- Optimized image2: ~120MB (JRE only, multi-stage build, non-root user)
