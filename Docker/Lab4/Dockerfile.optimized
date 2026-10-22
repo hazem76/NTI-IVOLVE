@@ -2,7 +2,7 @@
 FROM maven:3.9.15-eclipse-temurin-17-alpine AS builder
 WORKDIR /app
 COPY . .
-RUN mvn package -DskipTests
+RUN mvn package -DskipTests -Dspring-boot.repackage.skip=true
 
 # Stage 2: Runtime stage
 FROM eclipse-temurin:17-jre-alpine
@@ -11,4 +11,4 @@ WORKDIR /app
 COPY --from=builder /app/target/demo-0.0.1-SNAPSHOT.jar app.jar
 USER appuser
 EXPOSE 8080
-CMD ["java", "-jar", "app.jar"]
+CMD ["java", "-cp", "app.jar", "com.example.demo.DemoApplication"]
