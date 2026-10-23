@@ -1,23 +1,120 @@
-# Lab 8: Docker Compose Stack
+# Lab 8: Docker Compose Stack - Node.js & MySQL
 
-version: '3.8'
+## Overview
+Lab 8 demonstrates a complete Docker Compose configuration for a Node.js application with MySQL database persistence, custom networking, and volume-based data persistence.
 
-services:
-  app:
-    image: nginx:latest
-    ports:
-      - "8080:80"
-    volumes:
-      - ./src:/usr/share/nginx/html
+## Architecture
+- **app**: Node.js application (express server) connecting to MySQL
+- **db**: MySQL database server creating and hosting the `ivolve` database
+- **Network**: Custom bridge network `ivolve-net` for isolated communication
 
-  db:
-    image: postgres:13
-    environment:
-      POSTGRES_DB: appdb
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+## docker-compose.yml Configuration
 
-volumes:
-  postgres_data:
+### Networks
+- `ivolve-net`: Custom bridge network for service communication
+
+### Volumes
+- `db_data`: Persists MySQL data at `/var/lib/mysql`
+- `app-logs`: Persists Node.js application logs at `/app/logs/`
+
+### Services
+
+#### App Service
+```yaml
+app:
+  build: ./src
+  ports:
+    - "3000:3000"
+  environment:
+    - DB_HOST=db
+    - DB_USER=root
+    - DB_PASSWORD=password
+    - DB_NAME=ivolve
+  volumes:
+    - app-logs:/app/logs/
+  networks:
+    - ivolve-net
+```
+
+#### Database Service
+```yaml
+db:
+  image: mysql:8.0
+  environment:
+    - MYSQL_ROOT_PASSWORD=password
+    - MYSQL_DATABASE=ivolve
+    - MYSQL_USER=ivolve_user
+    - MYSQL_PASSWORD=ivolve_pass
+  volumes:
+    - db_data:/var/lib/mysql
+  networks:
+    - ivolve-net
+```
+
+## Execution Steps
+
+### 1. Start the Stack
+```bash
+docker compose up -d
+```
+
+### 2. Wait for MySQL Initialization
+```bash
+# Check MySQL is ready
+docker compose logs db | grep -i "ready"
+
+# Check app is running
+docker compose logs app | grep -i "server started"
+```
+
+### 3. Verify Database Connectivity
+```bash
+# Check health endpoint
+curl http://localhost:3000/health
+
+# Check MySQL database
+docker exec -it $(docker compose ps -q db) mysql -u root -pivolve -e "SHOW TABLES;"
+```
+
+### 4. Tag and Push to Docker Hub
+```bash
+# Tag the image with your Docker Hub username
+docker tag lab8-node-mysql your-dockerhub-username/lab8-node-mysql:latest
+
+# Push to Docker Hub
+docker push your-dockerhub-username/lab8-node-mysql:latest
+```
+
+### 5. Stop the Stack
+```bash
+docker compose down
+```
+
+## Persistence
+
+| Data Type | Volume | Mount Path |
+|-----------|--------|------------|
+| MySQL Data | `db_data` | `/var/lib/mysql` |
+| App Logs | `app-logs` | `/app/logs/` |
+
+## Environment Variables
+
+### App Service Variables
+- `DB_HOST`: Database host service name (`db`)
+- `DB_USER`: MySQL username (`root`)
+- `DB_PASSWORD`: MySQL password (`password`)
+- `DB_NAME`: Database name (`ivolve`)
+
+### Database Service Variables
+- `MYSQL_ROOT_PASSWORD`: Root password (`password`)
+- `MYSQL_DATABASE`: Initial database name (`ivolve`)
+- `MYSQL_USER`: Additional user (`ivolve_user`)
+- `MYSQL_PASSWORD`: Additional user password (`ivolve_pass`)
+
+## Expected Results
+
+- Application accessible at `http://localhost:3000`
+- Health check at `http://localhost:3000/health`
+- Ready check at `http://localhost:3000/ready`
+- MySQL `ivolve` database with `products` table containing sample items
+- Data persists across container restarts via volumes
