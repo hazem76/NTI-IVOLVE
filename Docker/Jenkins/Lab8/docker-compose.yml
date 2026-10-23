@@ -1,0 +1,23 @@
+# Lab 8: Docker Compose Stack
+
+version: '3.8'
+
+services:
+  app:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/usr/share/nginx/html
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
