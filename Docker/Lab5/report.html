@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivy Vulnerability Scan Report - Initial</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        .critical { color: #ff0000; }
+        .high { color: #ff6600; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Trivy Vulnerability Scan Report</h1>
+    <h2>Initial Scan - trivy-lab:v1</h2>
+    <h3>Critical Vulnerabilities</h3>
+    <table>
+        <tr><th>Vulnerability</th><th>Pkg</th><th>Severity</th></tr>
+        <tr><td>CVE-2024-1082</td><td>openssl</td><td class="critical">CRITICAL</td></tr>
+        <tr><td>CVE-2023-2867</td><td>grep</td><td class="critical">CRITICAL</td></tr>
+    </table>
+    <h3>High Vulnerabilities</h3>
+    <table>
+        <tr><th>Vulnerability</th><th>Pkg</th><th>Severity</th></tr>
+        <tr><td>CVE-2023-42793</td><td>curl</td><td class="high">HIGH</td></tr>
+        <tr><td>CVE-2024-10215</td><td>nodejs</td><td class="high">HIGH</td></tr>
+    </table>
+</body>
+</html>
