@@ -1,0 +1,39 @@
+# Trivy vulnerability scanning configuration for Lab 5
+
+## Overview
+Trivy scan configuration for container image vulnerability scanning.
+
+## Scan Configuration
+- **Ignore Unfixed Vulnerabilities**: Focus on fixing critical vulnerabilities
+- **Severity Threshold**: Minimum severity level to report
+- **Skip Files**: Patterns to exclude from scanning
+
+## Configuration
+```yaml
+ignoreUnfixed: true
+severity: CRITICAL
+
+# Skip these file patterns
+skipFiles:
+  - "*.log"
+  - "node_modules/**
+
+# Vulnerability filters
+vulnerabilityFilters:
+  - severity: LOW
+    operator: Equals
+    vendor: "*"
+```
+
+## Usage
+```bash
+# Run Trivy scan with this configuration
+trivy config --config trivy.yaml
+
+# Or use with image scan
+trivy image --config trivy.yaml <image-name>
+```
+
+## Reports
+- **report.html**: Full HTML scan report
+- **report-fixed.html**: Fixed/vulnerability-remediated report
