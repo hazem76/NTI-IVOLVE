@@ -1,0 +1,39 @@
+# Lab 10: Node Isolation Using Taints and Labels
+
+## Taint Node Manifest
+Rather than a YAML manifest, tainting a node is done via kubectl command:
+
+```bash
+kubectl taint nodes <node-name> workload=ivolveApp:NoSchedule
+```
+
+## Label Node Manifest
+Similarly, labeling a node is done via kubectl command:
+
+```bash
+kubectl label nodes <node-name> project=ivolve
+```
+
+## Sample Node YAML (for reference)
+```yaml
+apiVersion: v1
+kind: Node
+metadata:
+  name: node1.example.com
+  labels:
+    project: ivolve
+spec:
+  taints:
+  - key: workload
+    value: ivolveApp
+    effect: NoSchedule
+```
+
+## Verification Commands
+```bash
+# Describe node with taints and labels
+kubectl describe node node1.example.com
+
+# Get nodes with labels displayed
+kubectl get nodes --show-labels
+```
