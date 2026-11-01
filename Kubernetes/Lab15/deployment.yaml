@@ -41,7 +41,7 @@ spec:
               "
           envFrom:
             - secretRef:
-                name: ivolveSecret
+                name: ivolve-secret
       containers:
         - name: ivolve-app
           image: hazem7777/nodejs-docker-exercise:prod
@@ -49,9 +49,9 @@ spec:
             - containerPort: 3000
           envFrom:
             - configMapRef:
-                name: ivolveCM
+                name: ivolve-cm
             - secretRef:
-                name: ivolveSecret
+                name: ivolve-secret
           volumeMounts:
             - name: app-logs
               mountPath: /app/logs

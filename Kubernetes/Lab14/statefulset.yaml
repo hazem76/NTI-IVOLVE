@@ -47,9 +47,9 @@ spec:
               name: mysql
           envFrom:
             - configMapRef:
-                name: ivolveCM
+                name: ivolve-cm
             - secretRef:
-                name: ivolveSecret
+                name: ivolve-secret
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql
