@@ -8,4 +8,3 @@ data:
   LOG_LEVEL: "info"
   API_TIMEOUT: "30"
   ENVIRONMENT: "production"
-```

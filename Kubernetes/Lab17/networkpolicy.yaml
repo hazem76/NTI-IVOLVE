@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ivolveNP
+  namespace: ivolve
+spec:
+  podSelector:
+    matchLabels:
+      app: ivolveDB
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: ivolveApp
+      ports:
+        - protocol: TCP
+          port: 3306
