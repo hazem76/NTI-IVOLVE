@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ivolveApp
+  name: ivolve-app
   namespace: ivolve
   labels:
-    app: ivolveApp
+    app: ivolve-app
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: ivolveApp
+      app: ivolve-app
   template:
     metadata:
       labels:
-        app: ivolveApp
+        app: ivolve-app
     spec:
       nodeSelector:
         project: ivolve
       tolerations:
-        - key: "workload"
-          operator: "Equal"
-          value: "ivolveApp"
-          effect: "NoSchedule"
+        - key: workload
+          operator: Equal
+          value: ivolve-app
+          effect: NoSchedule
       initContainers:
         - name: init-db
           image: mysql:8.0
@@ -29,11 +29,11 @@ spec:
             - sh
             - -c
             - |
-              until mysqladmin ping -h ivolveDBSvc -P 3306 --silent; do
+              until mysqladmin ping -h ivolve-db-svc -P 3306 --silent; do
                 echo "Waiting for database..."
                 sleep 2
               done
-              mysql -h ivolveDBSvc -u root -p"$MYSQL_ROOT_PASSWORD" -e "
+              mysql -h ivolve-db-svc -u root -p"$MYSQL_ROOT_PASSWORD" -e "
                 CREATE DATABASE IF NOT EXISTS ivolve;
                 CREATE USER IF NOT EXISTS 'ivolve'@'%' IDENTIFIED BY 'password';
                 GRANT ALL PRIVILEGES ON ivolve.* TO 'ivolve'@'%';

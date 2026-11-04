@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ivolveAppSvc
+  name: ivolve-app-svc
   namespace: ivolve
   labels:
-    app: ivolveApp
+    app: ivolve-app
 spec:
   type: ClusterIP
   ports:
@@ -13,4 +13,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: ivolveApp
+    app: ivolve-app
