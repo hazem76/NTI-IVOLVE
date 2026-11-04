@@ -1,0 +1,118 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "hazem7777/nodejs-docker-exercise"
+        DOCKER_TAG = "${env.BUILD_NUMBER}"
+        DOCKER_REGISTRY = "docker.io"
+        DOCKERHUB_CREDENTIALS = 'dockerhub-credentials'
+        KUBECONFIG_CREDENTIALS = 'kubeconfig-credentials'
+        APP_NAME = 'ivolve-app'
+        NAMESPACE = 'ivolve'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build App') {
+            steps {
+                dir('src') {
+                    sh 'npm install'
+                    sh 'npm test'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    def imageName = "${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    sh "docker build -t ${imageName} -f Dockerfile ."
+                    echo "Built Docker image: ${imageName}"
+                }
+            }
+        }
+
+        stage('Scan Docker Image') {
+            steps {
+                script {
+                    def imageName = "${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    sh """
+                    docker run --rm -v //var/run/docker.sock:/var/run/docker.sock \
+                        aquasec/trivy:latest image \
+                        --exit-code 0 \
+                        --severity HIGH,CRITICAL \
+                        ${imageName} || true
+                    """
+                    echo "Trivy scan completed for ${imageName}"
+                }
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        def imageName = "${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
+                        sh "docker push ${imageName}"
+                        sh "docker logout"
+                        echo "Pushed Docker image: ${imageName}"
+                    }
+                }
+            }
+        }
+
+        stage('Delete Local Image') {
+            steps {
+                script {
+                    def imageName = "${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    sh "docker rmi ${imageName} || true"
+                    echo "Deleted local Docker image: ${imageName}"
+                }
+            }
+        }
+
+        stage('Update Deployment Manifest') {
+            steps {
+                script {
+                    def imageName = "${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    // Update image tag in deployment.yaml
+                    sh "sed -i 's|image: .*|image: ${imageName}|' deployment.yaml"
+                    echo "Updated deployment.yaml with image: ${imageName}"
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: "${KUBECONFIG_CREDENTIALS}", variable: 'KUBECONFIG')]) {
+                        sh "export KUBECONFIG=${KUBECONFIG}"
+                        sh "kubectl apply -f deployment.yaml -n ${NAMESPACE}"
+                        echo "Deployed to Kubernetes namespace: ${NAMESPACE}"
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+            echo 'Pipeline execution completed. Workspace cleaned.'
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+            echo "Application deployed: ${DOCKER_IMAGE}:${DOCKER_TAG}"
+        }
+        failure {
+            echo 'Pipeline failed!'
+            echo "Check build logs for details: ${env.BUILD_URL}"
+        }
+    }
+}
