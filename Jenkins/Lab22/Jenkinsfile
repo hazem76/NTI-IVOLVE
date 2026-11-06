@@ -1,0 +1,74 @@
+@Library('ivolve-shared-library') _
+
+pipeline {
+    agent { label 'ivolve-slave' }
+
+    environment {
+        DOCKER_IMAGE = 'hazem7777/nodejs-docker-exercise'
+        DOCKER_TAG = "${env.BUILD_NUMBER}"
+        DOCKER_REGISTRY = 'docker.io'
+        REGISTRY_CREDENTIALS = 'dockerhub-credentials'
+        KUBECONFIG_CREDENTIALS = 'kubeconfig-credentials'
+        NAMESPACE = 'ivolve'
+        DEPLOYMENT_FILE = 'deployment.yaml'
+        GITOPS_MODE = true
+        GIT_REPO = 'https://github.com/hazem76/NTI-IVOLVE.git'
+        GIT_BRANCH = 'main'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build App') {
+            steps {
+                BuildApp()
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    def imageName = BuildImage([
+                        dockerImage: env.DOCKER_IMAGE,
+                        dockerTag: env.DOCKER_TAG,
+                        dockerRegistry: env.DOCKER_REGISTRY,
+                        registryCredentials: env.REGISTRY_CREDENTIALS
+                    ])
+                    echo "Built and pushed image: ${imageName}"
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                DeployOnK8s([
+                    deploymentFile: env.DEPLOYMENT_FILE,
+                    dockerImage: env.DOCKER_IMAGE,
+                    dockerTag: env.DOCKER_TAG,
+                    namespace: env.NAMESPACE,
+                    kubeconfigCredentials: env.KUBECONFIG_CREDENTIALS,
+                    gitOpsMode: env.GITOPS_MODE.toBoolean(),
+                    gitRepo: env.GIT_REPO,
+                    gitBranch: env.GIT_BRANCH
+                ])
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+            echo 'Pipeline execution completed. Workspace cleaned.'
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed! Check build logs.'
+        }
+    }
+}
