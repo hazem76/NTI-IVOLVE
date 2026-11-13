@@ -1,0 +1,18 @@
+---
+# meta file for kubectl role
+galaxy_info:
+  author: iVolve
+  description: Kubectl CLI installation role
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+  galaxy_tags:
+    - kubectl
+    - kubernetes
+    - cli
+
+dependencies: []

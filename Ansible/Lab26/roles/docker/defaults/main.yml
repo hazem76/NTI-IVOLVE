@@ -1,0 +1,5 @@
+---
+# defaults file for docker role
+docker_version: "20.10.21"
+docker_users:
+  - vagrant

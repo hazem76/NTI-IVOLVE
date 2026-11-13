@@ -1,0 +1,4 @@
+---
+# vars file for kubectl role
+kubectl_version: "v1.28.0"
+kubectl_install_path: /usr/local/bin/kubectl

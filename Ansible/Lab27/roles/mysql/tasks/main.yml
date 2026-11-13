@@ -1,0 +1,40 @@
+---
+# tasks file for mysql role
+- name: Install MySQL server package
+  apt:
+    name:
+      - mysql-server
+      - python3-pymysql
+    state: present
+    update_cache: yes
+
+- name: Start and enable MySQL service
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: Create ivovle database
+  community.mysql.mysql_db:
+    name: ivovle
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create ivolveuser database user
+  community.mysql.mysql_user:
+    name: ivolveuser
+    password: "{{ mysql_user_password }}"
+    priv: "ivovle.*:ALL"
+    state: present
+    host: "%"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Flush MySQL privileges
+  community.mysql.mysql_user:
+    name: ivolveuser
+    password: "{{ mysql_user_password }}"
+    priv: "ivovle.*:ALL"
+    state: present
+    host: "%"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    update_password: always

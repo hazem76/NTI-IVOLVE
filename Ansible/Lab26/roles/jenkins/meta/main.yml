@@ -1,0 +1,18 @@
+---
+# meta file for jenkins role
+galaxy_info:
+  author: iVolve
+  description: Jenkins CI/CD server installation role
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+  galaxy_tags:
+    - jenkins
+    - ci
+    - cd
+
+dependencies: []

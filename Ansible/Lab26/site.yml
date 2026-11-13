@@ -1,0 +1,13 @@
+---
+- name: Orchestrate Docker, Kubectl, and Jenkins Roles
+  hosts: managed_nodes
+  become: yes
+  roles:
+    - role: docker
+      vars:
+        docker_users:
+          - vagrant
+    - role: kubectl
+    - role: jenkins
+      vars:
+        jenkins_port: 8080

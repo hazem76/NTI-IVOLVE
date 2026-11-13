@@ -1,0 +1,17 @@
+# Ansible Lab 24 Inventory
+# Managed nodes for initial Ansible configuration and ad-hoc execution
+
+[managed_nodes]
+ivolve-node-1 ansible_host=192.168.1.10 ansible_user=vagrant
+ivolve-node-2 ansible_host=192.168.1.11 ansible_user=vagrant
+ivolve-node-3 ansible_host=192.168.1.12 ansible_user=vagrant
+
+[web_servers]
+ivolve-node-1
+
+[db_servers]
+ivolve-node-2
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'

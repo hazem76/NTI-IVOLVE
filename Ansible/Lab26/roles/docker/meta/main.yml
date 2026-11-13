@@ -1,0 +1,18 @@
+---
+# meta file for docker role
+galaxy_info:
+  author: iVolve
+  description: Docker container engine setup role
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+  galaxy_tags:
+    - docker
+    - container
+    - runtime
+
+dependencies: []

@@ -1,0 +1,7 @@
+---
+# defaults file for mysql role
+mysql_root_password: "changeme"
+mysql_user_password: "changeme"
+mysql_database: ivovle
+mysql_user: ivolveuser
+mysql_version: "8.0"

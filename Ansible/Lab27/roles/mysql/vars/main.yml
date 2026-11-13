@@ -1,0 +1,7 @@
+---
+# vault-encrypted vars file for mysql role
+# Encrypt with: ansible-vault encrypt roles/mysql/vars/main.yml
+mysql_root_password: "RootPass123!"
+mysql_user_password: "Iv0lveUserPass!"
+mysql_database: ivovle
+mysql_user: ivolveuser

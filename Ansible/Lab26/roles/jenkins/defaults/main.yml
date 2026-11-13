@@ -1,0 +1,4 @@
+---
+# defaults file for jenkins role
+jenkins_port: 8080
+jenkins_java_package: openjdk-17-jre

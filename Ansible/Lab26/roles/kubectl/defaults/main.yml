@@ -1,0 +1,6 @@
+---
+# defaults file for kubectl role
+kubectl_version: "v1.28.0"
+kubectl_install_path: /usr/local/bin/kubectl
+kubectl_architecture: amd64
+kubectl_os: linux

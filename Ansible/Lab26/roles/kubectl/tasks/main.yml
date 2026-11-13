@@ -1,0 +1,22 @@
+---
+# tasks file for kubectl role
+- name: Determine Kubectl version
+  set_fact:
+    kubectl_version: "{{ kubectl_version | default('v1.28.0') }}"
+
+- name: Download Kubectl binary
+  get_url:
+    url: "https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/amd64/kubectl"
+    dest: /usr/local/bin/kubectl
+    mode: '0755'
+    force: yes
+
+- name: Verify Kubectl installation
+  command: kubectl version --client
+  register: kubectl_check
+  changed_when: false
+  failed_when: false
+
+- name: Display Kubectl version
+  debug:
+    msg: "Kubectl installed: {{ kubectl_check.stdout_lines[0] if kubectl_check.stdout_lines else 'unknown' }}"

@@ -1,0 +1,50 @@
+# AWS EC2 Dynamic Inventory Configuration
+# Uses amazon.aws.aws_ec2 plugin to discover EC2 instances tagged with server:ivolve
+
+plugin: amazon.aws.aws_ec2
+regions:
+  - us-east-1
+  - us-west-2
+  - eu-west-1
+
+# Filter instances tagged with server:ivolve that are running
+filters:
+  instance-state-name: running
+  tag:server: ivolve
+
+# Group instances by various criteria
+group_by:
+  - instance_state
+  - instance_type
+  - placement_region
+  - tag:server
+  - tag:environment
+  - tag:project
+
+# Key used for hostname/address
+keyed_groups:
+  - prefix: tag_server
+    key: tags.server
+  - prefix: tag_env
+    key: tags.environment
+  - prefix: region
+    key: placement.region
+
+# Host variables to export
+host_variables:
+  - instance_id
+  - instance_type
+  - private_ip_address
+  - public_ip_address
+  - placement.region
+  - state.name
+  - tags
+
+# Compose variables for Ansible connection
+compose:
+  ansible_host: public_ip_address | default(private_ip_address)
+  ansible_user: ubuntu
+  ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+
+# Example: Only include instances with specific tags
+# strict: false

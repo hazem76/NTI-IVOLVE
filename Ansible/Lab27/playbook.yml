@@ -1,0 +1,6 @@
+---
+- name: Install and Configure MySQL with Vault-Encrypted Credentials
+  hosts: managed_nodes
+  become: yes
+  roles:
+    - role: mysql
